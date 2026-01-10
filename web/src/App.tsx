@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+//import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
@@ -8,7 +9,7 @@ import SupportSection from './components/SupportSection';
 import ResourcesSection from './components/ResourcesSection';
 import ContactForm from './components/ContactForm';
 import AboutUs from './components/AboutUs';
-import { Page } from './types';
+import type { Page } from './types';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');

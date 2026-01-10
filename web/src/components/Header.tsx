@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
-import { Page } from '../types';
-import { SERVICES, SUPPORT_CATEGORIES } from '../constants';
+import type { Page } from '../types';
+import { SERVICES, SUPPORT_CATEGORIES } from '@/constants';
 
 interface HeaderProps {
   onNavigate: (page: Page) => void;

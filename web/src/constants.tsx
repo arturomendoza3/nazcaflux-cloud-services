@@ -1,17 +1,18 @@
 
-import React from 'react';
-import { 
+//import React from 'react';
+import {
+  //Shield, 
   Cloud, 
   Settings, 
-  ShieldCheck, 
-  BarChart, 
-  Users, 
+  //ShieldCheck, 
+  //BarChart, 
+  //Users, 
   Github, 
   Video, 
   FileText,
   Terminal,
-  Server,
-  Network,
+  //Server,
+  //Network,
   Eye,
   Lock,
   GraduationCap
