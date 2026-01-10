@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import type { Page } from '../types';
@@ -13,17 +12,17 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const NavItem = ({ label, page, hasDropdown = false, dropdownItems = [] }: { label: string, page: Page, hasDropdown?: boolean, dropdownItems?: any[] }) => (
-    <div className="relative group dropdown">
-      <button 
+    <div className="relative group">
+      <button
         onClick={() => { if(!hasDropdown) onNavigate(page); }}
         className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors hover:text-sky-500 ${currentPage === page ? 'text-sky-600' : 'text-slate-600'}`}
       >
         {label}
         {hasDropdown && <ChevronDown className="w-4 h-4" />}
       </button>
-      
+
       {hasDropdown && (
-        <div className="dropdown-content left-0 mt-0 w-64 bg-white border border-slate-100 shadow-xl rounded-lg py-2 animate-fade-in">
+        <div className="absolute left-0 mt-0 w-64 bg-white border border-slate-100 shadow-xl rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto">
           {dropdownItems.map((item, idx) => (
             <button
               key={idx}
@@ -52,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-2">
-            <button 
+            <button
               onClick={() => onNavigate('home')}
               className={`px-4 py-2 text-sm font-medium transition-colors hover:text-sky-500 ${currentPage === 'home' ? 'text-sky-600' : 'text-slate-600'}`}
             >
@@ -62,8 +61,8 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
             <NavItem label="Soporte" page="support" hasDropdown dropdownItems={SUPPORT_CATEGORIES} />
             <NavItem label="Recursos" page="resources" />
             <NavItem label="Nosotros" page="about" />
-            
-            <button 
+
+            <button
               onClick={() => onNavigate('contact')}
               className="ml-4 px-5 py-2.5 bg-sky-600 text-white text-sm font-semibold rounded-full hover:bg-sky-700 transition-all shadow-md hover:shadow-lg active:scale-95"
             >
