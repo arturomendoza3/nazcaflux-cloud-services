@@ -42,7 +42,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h4 className="text-white font-bold mb-6">Contacto</h4>
             <ul className="space-y-4 text-slate-400">
               <li>info@nazcaflux.com</li>
-              <li>+51 987 654 321</li>
+              <li>+51 902 186 301</li>
               <li>Lima, Perú</li>
             </ul>
           </div>

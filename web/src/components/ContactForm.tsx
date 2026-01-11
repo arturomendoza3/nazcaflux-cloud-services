@@ -1,9 +1,11 @@
-
 import React, { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 const ContactForm: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,13 +14,84 @@ const ContactForm: React.FC = () => {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const saveToGoogleSheets = async (data: typeof formData) => {
+    const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+    
+    if (!GOOGLE_SCRIPT_URL) return; // Si no está configurado, no intenta guardar
+    
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fecha: new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' }),
+          nombre: data.name,
+          email: data.email,
+          empresa: data.company,
+          servicio: data.service,
+          mensaje: data.message,
+        }),
+      });
+    } catch (error) {
+      console.error('Error guardando en Google Sheets:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sending inquiry:', formData);
-    // Simulate API call
-    setTimeout(() => {
+    setIsSubmitting(true);
+    setSubmitError(false);
+
+    try {
+      // 1. Enviar email de notificación a dirack2026@gmail.com
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_NOTIFICATION,
+        {
+          to_email: 'dirack2026@gmail.com',
+          from_name: formData.name,
+          from_email: formData.email,
+          empresa: formData.company,
+          servicio: formData.service,
+          mensaje: formData.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // 2. Enviar email automático de confirmación al cliente
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_AUTO_REPLY,
+        {
+          to_email: formData.email,
+          to_name: formData.name,
+          empresa: formData.company,
+          servicio: formData.service,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // 3. Guardar en Google Sheets
+      await saveToGoogleSheets(formData);
+
+      // 4. Mostrar mensaje de éxito
       setIsSubmitted(true);
-    }, 1000);
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        service: 'Consultoría DevOps',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error al enviar:', error);
+      setSubmitError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -54,7 +127,7 @@ const ContactForm: React.FC = () => {
                 <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
                   <span className="text-xl">📍</span>
                 </div>
-                <span>Calle Tech 123, Cloud City</span>
+                <span>Av. San Felipe 101, Lima-Perú</span>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
@@ -66,6 +139,12 @@ const ContactForm: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="md:w-2/3 p-12 space-y-6">
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                Hubo un error al enviar el mensaje. Por favor, verifica tu configuración o intenta nuevamente.
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Nombre Completo</label>
@@ -76,6 +155,7 @@ const ContactForm: React.FC = () => {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  disabled={isSubmitting}
                 />
               </div>
               <div>
@@ -87,6 +167,7 @@ const ContactForm: React.FC = () => {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -101,6 +182,7 @@ const ContactForm: React.FC = () => {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all"
                   value={formData.company}
                   onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  disabled={isSubmitting}
                 />
               </div>
               <div>
@@ -109,6 +191,7 @@ const ContactForm: React.FC = () => {
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all appearance-none"
                   value={formData.service}
                   onChange={(e) => setFormData({...formData, service: e.target.value})}
+                  disabled={isSubmitting}
                 >
                   <option>Consultoría DevOps</option>
                   <option>Automatización Infraestructura</option>
@@ -129,15 +212,17 @@ const ContactForm: React.FC = () => {
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all resize-none"
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
+                disabled={isSubmitting}
               ></textarea>
             </div>
 
             <button 
               type="submit"
-              className="w-full flex items-center justify-center gap-3 py-4 bg-sky-600 text-white font-bold rounded-xl hover:bg-sky-500 transition-all shadow-lg active:scale-95"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-3 py-4 bg-sky-600 text-white font-bold rounded-xl hover:bg-sky-500 transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="w-5 h-5" />
-              Enviar Solicitud
+              {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
             </button>
           </form>
         </div>
