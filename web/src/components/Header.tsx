@@ -1,15 +1,21 @@
 import React from 'react';
 import { ChevronDown, Menu, X, FileText, Video, Github } from 'lucide-react';
 import type { Page } from '../types';
+//import { SERVICES } from '@/constants';
 import { SERVICES, SUPPORT_CATEGORIES } from '@/constants';
+import { getAllServices } from '@/components/servicesData';
 
 interface HeaderProps {
   onNavigate: (page: Page) => void;
   currentPage: Page;
+  onServiceClick?: (slug: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
+const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onServiceClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Obtener servicios detallados para navegación
+  const servicesForNav = getAllServices();
 
   const RESOURCE_ITEMS = [
     { label: 'Artículos', icon: FileText, page: 'articles-list' as Page },
@@ -29,18 +35,48 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
     }
   };
 
+  // Callback para manejar click en servicio del dropdown
+  //const handleServiceDropdownClick = (serviceSlug: string) => {
+    // Usar un evento personalizado para navegar al servicio
+  //  window.dispatchEvent(new CustomEvent('navigate-to-service', { detail: { slug: serviceSlug } }));
+  //};
+
+    // DESPUÉS (usar el callback directo):
+  const handleServiceDropdownClick = (serviceSlug: string) => {
+    if (onServiceClick) {
+      onServiceClick(serviceSlug);
+    }
+  };
+
+
+  //React.useEffect(() => {
+  //  const handleNavigateToService = (e: CustomEvent) => {
+  //    const slug = e.detail.slug;
+      // Usar window.location.hash como hack para pasar el slug
+  //    window.location.hash = `service-${slug}`;
+  //  };
+
+  //  window.addEventListener('navigate-to-service', handleNavigateToService as EventListener);
+    
+  //  return () => {
+  //    window.removeEventListener('navigate-to-service', handleNavigateToService as EventListener);
+  //  };
+  //}, []);
+
   const NavItem = ({ 
     label, 
     sectionId,
     hasDropdown = false, 
     dropdownItems = [],
-    showDropdownIcons = false
+    showDropdownIcons = false,
+    isServicesDropdown = false
   }: { 
     label: string, 
     sectionId?: string,
     hasDropdown?: boolean, 
     dropdownItems?: any[],
-    showDropdownIcons?: boolean
+    showDropdownIcons?: boolean,
+    isServicesDropdown?: boolean
   }) => (
     <div className="relative group">
       <button
@@ -78,8 +114,21 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
                 </button>
               );
             }
+
+            // Para servicios (navegar a página de detalle)
+            if (isServicesDropdown && item.slug) {
+              return (
+                <button
+                  key={idx}
+                  onClick={() => handleServiceDropdownClick(item.slug)}
+                  className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition-colors"
+                >
+                  {item.title}
+                </button>
+              );
+            }
             
-            // Para servicios/soporte (sin iconos, solo scroll)
+            // Para soporte (solo scroll)
             return (
               <button
                 key={idx}
@@ -115,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
             >
               Inicio
             </button>
-            <NavItem label="Servicios" sectionId="servicios" hasDropdown dropdownItems={SERVICES} />
+            <NavItem label="Servicios" sectionId="servicios" hasDropdown dropdownItems={servicesForNav} isServicesDropdown />
             <NavItem label="Soporte" sectionId="soporte" hasDropdown dropdownItems={SUPPORT_CATEGORIES} />
             <NavItem label="Recursos" sectionId="recursos" hasDropdown dropdownItems={RESOURCE_ITEMS} showDropdownIcons />
             <NavItem label="Nosotros" sectionId="nosotros" />
@@ -143,6 +192,20 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage }) => {
           {/* Servicios */}
           <div className="border-t border-slate-50 pt-3">
             <button onClick={() => { scrollToSection('servicios'); setIsMobileMenuOpen(false); }} className="block w-full text-left py-2 font-medium">Servicios</button>
+            <div className="pl-4 mt-2 space-y-2">
+              {servicesForNav.map((service) => (
+                <button
+                  key={service.id}
+                  onClick={() => {
+                    handleServiceDropdownClick(service.slug);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left py-1 text-sm text-slate-600"
+                >
+                  → {service.title}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Soporte */}

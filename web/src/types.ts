@@ -19,7 +19,7 @@ export interface ResourceItem {
   icon: React.ReactNode;
 }
 
-// Agregar tipo para artículos
+// Tipo para artículos
 export interface Article {
   id: string;
   slug: string;
@@ -31,10 +31,35 @@ export interface Article {
   author?: string;
 }
 
+// NUEVO: Tipo para servicios detallados
+export interface ServiceDetail {
+  id: string;
+  slug: string;
+  title: string;
+  shortDescription: string;
+  icon: any;
+  objective: string;
+  differentiators: string[];
+  process: {
+    step: number;
+    title: string;
+    description: string;
+  }[];
+  benefits: string[];
+  technologies?: string[];
+  caseStudy?: {
+    client: string;
+    challenge: string;
+    solution: string;
+    results: string[];
+  };
+}
+
 // Actualizar tipo Page con las nuevas rutas
 export type Page = 
   | 'home' 
   | 'services' 
+  | 'services-list'
   | 'support' 
   | 'resources' 
   | 'articles-list'
