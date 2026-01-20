@@ -84,10 +84,12 @@ export const RESOURCES = [
     link: '#', 
     icon: <Video className="w-5 h-5" /> 
   },
+   
   { 
     title: 'Templates de Infraestructura como Código', 
     type: 'GitHub', 
-    link: '#', 
+    link: 'https://github.com/nazcaflux', 
     icon: <Github className="w-5 h-5" /> 
   },
+  
 ];

@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onServiceClick
   const RESOURCE_ITEMS = [
     { label: 'Artículos', icon: FileText, page: 'articles-list' as Page },
     { label: 'Videos', icon: Video, page: 'videos-list' as Page },
-    { label: 'GitHub', icon: Github, action: () => window.open('https://github.com/arturomendoza3', '_blank') }
+    { label: 'GitHub', icon: Github, action: () => window.open('https://github.com/nazcaflux', '_blank') }
   ];
 
   // Función para hacer scroll a una sección
