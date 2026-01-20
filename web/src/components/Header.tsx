@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronDown, Menu, X, FileText, Video, Github } from 'lucide-react';
 import type { Page } from '../types';
 //import { SERVICES } from '@/constants';
-import { SERVICES, SUPPORT_CATEGORIES } from '@/constants';
+import {SUPPORT_CATEGORIES } from '@/constants';
 import { getAllServices } from '@/components/servicesData';
 
 interface HeaderProps {
