@@ -87,7 +87,7 @@ export const RESOURCES = [
   { 
     title: 'Templates de Infraestructura como Código', 
     type: 'GitHub', 
-    link: 'https://github.com/arturomendoza3', 
+    link: '#', 
     icon: <Github className="w-5 h-5" /> 
   },
 ];
